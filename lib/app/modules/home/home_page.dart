@@ -4,9 +4,9 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:image_processing/app/modules/home/home_store.dart';
 
 class HomePage extends StatefulWidget {
-  final String title;
-
-  const HomePage({Key? key, this.title = "Home"}) : super(key: key);
+  const HomePage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -21,7 +21,7 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
       ),
       body: Observer(
         builder: (_) {
-          if (controller.imageService.imageFuture == null) {
+          if (controller.imageService.imageValue == null) {
             return Center(
               child: ElevatedButton(
                 onPressed: () => controller.abrirImagem(),
@@ -29,14 +29,16 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
               ),
             );
           }
-          if (controller.imageService.uiImagemFuture == null) {
-            return const Center(child: CircularProgressIndicator());
-          }
           return SingleChildScrollView(
             child: Column(
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
+                    ElevatedButton(
+                      onPressed: controller.imageService.resetImage,
+                      child: const Text("Restaurar Imagem"),
+                    ),
                     ElevatedButton(
                       onPressed: controller.imageService.escalaDeCinza,
                       child: const Text("Escala de Cinza"),
@@ -44,12 +46,21 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                     ElevatedButton(
                       onPressed: controller.imageService.negativo,
                       child: const Text("Negativo"),
+                    ),
+                    ElevatedButton(
+                      onPressed: controller.imageService.transfLog,
+                      child: const Text("Trans. Logarítmica"),
+                    ),
+                    ElevatedButton(
+                      onPressed: controller.imageService.clearImage,
+                      child: const Text("Fechar"),
                     )
                   ],
                 ),
                 Center(
-                  child:
-                      RawImage(image: controller.imageService.uiImagemFuture),
+                  child: controller.imageService.uiImagemFuture != null
+                      ? RawImage(image: controller.imageService.uiImagemFuture)
+                      : const CircularProgressIndicator(),
                 ),
               ],
             ),

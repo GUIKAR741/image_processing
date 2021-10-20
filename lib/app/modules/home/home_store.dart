@@ -24,9 +24,9 @@ abstract class HomeStoreBase with Store {
       dialogTitle: "Abrir Imagem",
     );
     if (result != null) {
-      if (kIsWeb){
+      if (kIsWeb) {
         imageService.updateImage(img.decodeImage(result.files.single.bytes!)!);
-      }else{
+      } else {
         File file = File(result.files.single.path!);
         imageService.updateImage(img.decodeImage(file.readAsBytesSync())!);
       }

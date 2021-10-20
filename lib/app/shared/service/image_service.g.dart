@@ -12,13 +12,13 @@ mixin _$ImageService on ImageServiceBase, Store {
   final _$_imageAtom = Atom(name: 'ImageServiceBase._image');
 
   @override
-  ObservableFuture<img.Image>? get _image {
+  img.Image? get _image {
     _$_imageAtom.reportRead();
     return super._image;
   }
 
   @override
-  set _image(ObservableFuture<img.Image>? value) {
+  set _image(img.Image? value) {
     _$_imageAtom.reportWrite(value, super._image, () {
       super._image = value;
     });
@@ -56,6 +56,28 @@ mixin _$ImageService on ImageServiceBase, Store {
         name: 'ImageServiceBase.updateImage');
     try {
       return super.updateImage(imagem);
+    } finally {
+      _$ImageServiceBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void resetImage() {
+    final _$actionInfo = _$ImageServiceBaseActionController.startAction(
+        name: 'ImageServiceBase.resetImage');
+    try {
+      return super.resetImage();
+    } finally {
+      _$ImageServiceBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void clearImage() {
+    final _$actionInfo = _$ImageServiceBaseActionController.startAction(
+        name: 'ImageServiceBase.clearImage');
+    try {
+      return super.clearImage();
     } finally {
       _$ImageServiceBaseActionController.endAction(_$actionInfo);
     }
