@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:image_processing/app/modules/home/home_store.dart';
+import 'package:image_processing/app/modules/home/widgets/histograma.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -52,6 +53,18 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                       child: const Text("Trans. Logarítmica"),
                     ),
                     ElevatedButton(
+                      onPressed: controller.gammaCorrection,
+                      child: const Text("Trans. Potencia (Gamma Correction)"),
+                    ),
+                    ElevatedButton(
+                      onPressed: controller.histograma,
+                      child: const Text("Intensidade"),
+                    ),
+                    ElevatedButton(
+                      onPressed: controller.convolucao,
+                      child: const Text("Convolução"),
+                    ),
+                    ElevatedButton(
                       onPressed: controller.imageService.clearImage,
                       child: const Text("Fechar"),
                     )
@@ -59,7 +72,19 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                 ),
                 Center(
                   child: controller.imageService.uiImagemFuture != null
-                      ? RawImage(image: controller.imageService.uiImagemFuture)
+                      ? Column(
+                          children: [
+                            controller.showHistograma
+                                ? Histograma(
+                                    imagem: controller.imageService.imageValue!
+                                        .getBytes(),
+                                  )
+                                : Container(),
+                            RawImage(
+                              image: controller.imageService.uiImagemFuture,
+                            ),
+                          ],
+                        )
                       : const CircularProgressIndicator(),
                 ),
               ],

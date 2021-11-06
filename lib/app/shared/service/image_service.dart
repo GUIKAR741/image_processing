@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -16,9 +17,10 @@ abstract class ImageServiceBase with Store {
 
   img.Image? get imageValue => _image;
 
-  img.Image? _imageOriginal;
-
   bool _isCinza = false;
+
+  img.Image? _imageOriginal;
+  img.Image? _imageOriginalPB;
 
   @observable
   ObservableFuture<ui.Image>? _uiImage;
@@ -71,12 +73,19 @@ abstract class ImageServiceBase with Store {
     _uiImage = null;
   }
 
-  void _conversionImage(void Function() callback) {
+  void _conversionImage(
+    void Function() callback, {
+    bool original = false,
+    bool pb = false,
+  }) {
+    img.Image? imageValor = !pb && original
+        ? _imageOriginal
+        : (!original && pb ? _imageOriginalPB : imageValue);
     _uiImage = null;
-    ld = int8ToDouble(imageValue!.getBytes());
+    ld = int8ToDouble(imageValor!.getBytes());
     callback();
     li = doubleToInt8(ld);
-    updateImage(imageParse(imageValue!, li));
+    updateImage(imageParse(imageValor, li));
   }
 
   void escalaDeCinza() {
@@ -89,7 +98,11 @@ abstract class ImageServiceBase with Store {
           ld[i + 2] = l;
         }
       });
+      _imageOriginalPB ??= img.Image.from(_image!);
       _isCinza = true;
+    } else {
+      _image = _imageOriginalPB;
+      updateImage(_image!);
     }
   }
 
@@ -108,11 +121,95 @@ abstract class ImageServiceBase with Store {
     if (!_isCinza) escalaDeCinza();
     _conversionImage(() {
       for (var i = 0, len = ld.length; i < len; i += 4) {
-        double lx = log2(1 + ld[i]);
+        double lx = limites(log2(1 + ld[i]));
         ld[i] = lx;
         ld[i + 1] = lx;
         ld[i + 2] = lx;
       }
     });
+  }
+
+  void convolucao(List<List<num>> filtro) {
+    if (!_isCinza) escalaDeCinza();
+    _conversionImage(
+      () {
+        List<List<Pixel>> imagemMatrix = listImageToMatrix(
+          ld,
+          imageValue!.width,
+          imageValue!.height,
+        );
+        for (int y = 0; y < imagemMatrix.length; y++) {
+          for (int x = 0; x < imagemMatrix[y].length; x++) {
+            Pixel p = Pixel(a: imagemMatrix[y][x].a);
+            for (var i = 0; i < filtro.length; i++) {
+              for (var j = 0; j < filtro[i].length; j++) {
+                final yv = (y + j - (filtro.length ~/ 2)) < 0
+                    ? imagemMatrix.length + (y + j - (filtro.length ~/ 2))
+                    : ((y + j - (filtro.length ~/ 2)) >= imagemMatrix.length
+                        ? (y + j - (filtro.length ~/ 2)) - imagemMatrix.length
+                        : (y + j - (filtro.length ~/ 2)));
+                final xv = (x + i - (filtro[i].length ~/ 2)) < 0
+                    ? imagemMatrix[y].length + (x + i - (filtro[i].length ~/ 2))
+                    : ((x + i - (filtro[i].length ~/ 2)) >=
+                            imagemMatrix[y].length
+                        ? (x + i - (filtro[i].length ~/ 2)) -
+                            imagemMatrix[y].length
+                        : (x + i - (filtro[i].length ~/ 2)));
+                // final yv = limitar(
+                //   y + j - (filtro.length ~/ 2),
+                //   0,
+                //   imagemMatrix.length - 1,
+                // );
+                // final xv = limitar(
+                //   x + i - (filtro[i].length ~/ 2),
+                //   0,
+                //   imagemMatrix[y].length - 1,
+                // );
+                if (x == 0 && y == 0) {
+                  print(
+                      "(${i + 1},${j + 1}): $xv, $yv, ${y + j - (filtro[i].length ~/ 2)}, ${x + i - (filtro[i].length ~/ 2)}");
+                }
+                Pixel p2 = imagemMatrix[yv][xv];
+                p.r += p2.r * filtro[i][j];
+                p.g += p2.g * filtro[i][j];
+                p.b += p2.b * filtro[i][j];
+              }
+            }
+            // if (x==0 && y==0)print("${p.r} ${p.g} ${p.b}");
+            imagemMatrix[y][x].r = limitar(p.r, 0.0, 1.0);
+            imagemMatrix[y][x].g = limitar(p.g, 0.0, 1.0);
+            imagemMatrix[y][x].b = limitar(p.b, 0.0, 1.0);
+          }
+        }
+        // print(toListNum<double>(imagemMatrix));
+        ld = toListNum(imagemMatrix);
+      },
+      original: !_isCinza,
+      pb: _isCinza,
+    );
+  }
+
+  void transfPot(
+    double gamma,
+    double contrast,
+  ) {
+    _conversionImage(
+      () {
+        for (var i = 0, len = ld.length; i < len; i += 4) {
+          if (_isCinza) {
+            double lx = limites(contrast * pow(ld[i], gamma).toDouble());
+            ld[i] = lx;
+            ld[i + 1] = lx;
+            ld[i + 2] = lx;
+          } else {
+            ld[i] = limites(contrast * pow(ld[i], gamma).toDouble());
+            ld[i + 1] = limites(contrast * pow(ld[i + 1], gamma).toDouble());
+            ld[i + 2] = limites(contrast * pow(ld[i + 2], gamma).toDouble());
+          }
+        }
+      },
+      original: !_isCinza,
+      pb: _isCinza,
+    );
   }
 }
