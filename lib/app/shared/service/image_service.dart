@@ -134,10 +134,11 @@ abstract class ImageServiceBase with Store {
     _conversionImage(
       () {
         List<List<Pixel>> imagemMatrix = listImageToMatrix(
-          ld,
+          li,
           imageValue!.width,
           imageValue!.height,
         );
+        print(filtro);
         for (int y = 0; y < imagemMatrix.length; y++) {
           for (int x = 0; x < imagemMatrix[y].length; x++) {
             Pixel p = Pixel(a: imagemMatrix[y][x].a);
@@ -165,24 +166,28 @@ abstract class ImageServiceBase with Store {
                 //   0,
                 //   imagemMatrix[y].length - 1,
                 // );
-                if (x == 0 && y == 0) {
-                  print(
-                      "(${i + 1},${j + 1}): $xv, $yv, ${y + j - (filtro[i].length ~/ 2)}, ${x + i - (filtro[i].length ~/ 2)}");
-                }
+
                 Pixel p2 = imagemMatrix[yv][xv];
                 p.r += p2.r * filtro[i][j];
                 p.g += p2.g * filtro[i][j];
                 p.b += p2.b * filtro[i][j];
+                if (x == 0 && y == 0) {
+                  // print(
+                  //     "(${i + 1},${j + 1}): $xv, $yv, ${y + j - (filtro[i].length ~/ 2)}, ${x + i - (filtro[i].length ~/ 2)}");
+                  print(p2.r * filtro[i][j]);
+                  print(p2.g * filtro[i][j]);
+                  print(p2.b * filtro[i][j]);
+                }
               }
             }
-            // if (x==0 && y==0)print("${p.r} ${p.g} ${p.b}");
-            imagemMatrix[y][x].r = limitar(p.r, 0.0, 1.0);
-            imagemMatrix[y][x].g = limitar(p.g, 0.0, 1.0);
-            imagemMatrix[y][x].b = limitar(p.b, 0.0, 1.0);
+            if (x==0 && y==0)print("${p.r} ${p.g} ${p.b}");
+            imagemMatrix[y][x].r = limitar(p.r, 0, 255);
+            imagemMatrix[y][x].g = limitar(p.g, 0, 255);
+            imagemMatrix[y][x].b = limitar(p.b, 0, 255);
           }
         }
-        // print(toListNum<double>(imagemMatrix));
-        ld = toListNum(imagemMatrix);
+        print(toListNum(imagemMatrix).getRange(0, 100));
+        ld = intToDouble(toListNum(imagemMatrix));
       },
       original: !_isCinza,
       pb: _isCinza,

@@ -9,6 +9,10 @@ List<double> int8ToDouble(Uint8List integers) {
   return integers.map((e) => e / 255).toList();
 }
 
+List<double> intToDouble(List<int> integers) {
+  return integers.map((e) => e / 255).toList();
+}
+
 Uint8List doubleToInt8(List<double> doubles) {
   return Uint8List.fromList(doubles.map((e) => (e * 255).round()).toList());
 }
@@ -21,6 +25,9 @@ class Pixel {
   List<num> get toList => [r, g, b, a];
 
   List<E> toListCast<E>() => [r as E, g as E, b as E, a as E];
+
+  @override
+  String toString() => "$r, $g, $b";
 }
 
 List<List<Pixel>> listImageToMatrix(List<num> numbers, int width, int height) {
@@ -58,7 +65,7 @@ double limites(double i) => i < 0 ? 0 : (i > 1 ? 1 : i);
 
 int limitesInt(int i) => i < 0 ? 0 : (i > 255 ? 255 : i);
 
-E limitar<E extends num>(E i, E p, E t ) => i < p ? p : (i > t ? t : i);
+E limitar<E extends num>(E i, E p, E t) => i < p ? p : (i > t ? t : i);
 
 List<XyDataSeries<ChartSampleData, num>> getSeries({
   Uint8List? values,

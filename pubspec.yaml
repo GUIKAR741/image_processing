@@ -58,6 +58,7 @@ dependencies:
   asuka: ^2.0.0
   syncfusion_flutter_charts: ^19.3.46
   linalg: ^0.4.0
+  dio: ^4.0.3
 
 dev_dependencies:
   flutter_test:
