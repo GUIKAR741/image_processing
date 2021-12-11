@@ -62,6 +62,24 @@ abstract class HomeStoreBase with Store {
     }
   }
 
+  Future<void> salvarImagem() async {
+    String? result = await FilePicker.platform.saveFile(
+      dialogTitle: "Salvar Imagem",
+      fileName: imagemName,
+    );
+    if (result != null) {
+      print(result);
+      File(result).writeAsBytesSync(imagem!);
+    } else {
+      asuka.showSnackBar(
+        const SnackBar(
+          content: Text('Erro ao Salvar Imagem!'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
   void convolucao() {
     // asuka.showDialog(
     //   barrierDismissible: false,
@@ -294,7 +312,6 @@ abstract class HomeStoreBase with Store {
     );
   }
 
-
   @action
   void gamma() {
     sliderGamma = 1;
@@ -355,7 +372,6 @@ abstract class HomeStoreBase with Store {
       ),
     );
   }
-
 
   @action
   void restaurarImagem() {

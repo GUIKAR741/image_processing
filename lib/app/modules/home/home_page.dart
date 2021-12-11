@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -92,6 +93,12 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                       onPressed: () {},
                       child: const Text("Convolução"),
                     ),
+                    !kIsWeb
+                        ? ElevatedButton(
+                            onPressed: controller.salvarImagem,
+                            child: const Text("Salvar"),
+                          )
+                        : Container(),
                   ],
                 ),
                 Center(
