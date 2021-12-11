@@ -27,8 +27,6 @@ vars:
   splash: flutter pub run flutter_native_splash:create
 scripts:
   release_build: $release
-#  icon_build: $icon
-#  splash_build: $splash
   name_build: $name
   mobx_build: $runner build
   mobx_watch: $clean & $get & $runner watch --delete-conflicting-outputs --use-polling-watcher
@@ -52,12 +50,9 @@ dependencies:
   flutter_modular: ^4.1.2
   mobx: ^2.0.5
   flutter_mobx: ^2.0.2
-  image: ^3.0.8
   equatable: ^2.0.3
   file_picker: ^4.1.4
   asuka: ^2.0.0
-  syncfusion_flutter_charts: ^19.3.46
-  linalg: ^0.4.0
   dio: ^4.0.3
 
 dev_dependencies:

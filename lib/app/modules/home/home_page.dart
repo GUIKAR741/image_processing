@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:image_processing/app/modules/home/home_store.dart';
-import 'package:image_processing/app/modules/home/widgets/histograma.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -22,7 +21,7 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
       ),
       body: Observer(
         builder: (_) {
-          if (controller.imageService.imageValue == null) {
+          if (controller.imagemOriginal == null) {
             return Center(
               child: ElevatedButton(
                 onPressed: () => controller.abrirImagem(),
@@ -37,51 +36,70 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
-                      onPressed: controller.imageService.resetImage,
+                      onPressed: controller.restaurarImagem,
                       child: const Text("Restaurar Imagem"),
                     ),
                     ElevatedButton(
-                      onPressed: controller.imageService.escalaDeCinza,
-                      child: const Text("Escala de Cinza"),
+                      onPressed: controller.blackAndWhite,
+                      child: const Text("Preto e Branco"),
                     ),
                     ElevatedButton(
-                      onPressed: controller.imageService.negativo,
+                      onPressed: controller.grayscalePonderado,
+                      child: const Text("Escala de Cinza Ponderado"),
+                    ),
+                    ElevatedButton(
+                      onPressed: controller.grayscaleMedia,
+                      child: const Text("Escala de Cinza Media"),
+                    ),
+                    ElevatedButton(
+                      onPressed: controller.sepia,
+                      child: const Text("Sepia"),
+                    ),
+                    ElevatedButton(
+                      onPressed: controller.negativo,
                       child: const Text("Negativo"),
                     ),
                     ElevatedButton(
-                      onPressed: controller.imageService.transfLog,
-                      child: const Text("Trans. Logarítmica"),
-                    ),
-                    ElevatedButton(
-                      onPressed: controller.gammaCorrection,
-                      child: const Text("Trans. Potencia (Gamma Correction)"),
-                    ),
-                    ElevatedButton(
-                      onPressed: controller.histograma,
-                      child: const Text("Intensidade"),
-                    ),
-                    ElevatedButton(
-                      onPressed: controller.convolucao,
-                      child: const Text("Convolução"),
-                    ),
-                    ElevatedButton(
-                      onPressed: controller.imageService.clearImage,
+                      onPressed: controller.fechar,
                       child: const Text("Fechar"),
                     )
                   ],
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: controller.hsv,
+                      child: const Text("HSV"),
+                    ),
+                    ElevatedButton(
+                      onPressed: controller.hsvCV2,
+                      child: const Text("HSV CV2"),
+                    ),
+                    ElevatedButton(
+                      onPressed: controller.log,
+                      child: const Text("Trans. Logarítmica"),
+                    ),
+                    ElevatedButton(
+                      onPressed: controller.gamma,
+                      child: const Text("Trans. Potencia (Gamma Correction)"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: const Text("Intensidade"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: const Text("Convolução"),
+                    ),
+                  ],
+                ),
                 Center(
-                  child: controller.imageService.uiImagemFuture != null
+                  child: controller.imagem != null
                       ? Column(
                           children: [
-                            controller.showHistograma
-                                ? Histograma(
-                                    imagem: controller.imageService.imageValue!
-                                        .getBytes(),
-                                  )
-                                : Container(),
-                            RawImage(
-                              image: controller.imageService.uiImagemFuture,
+                            Image.memory(
+                              controller.imagem!,
                             ),
                           ],
                         )

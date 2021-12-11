@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:asuka/asuka.dart' as asuka;
+import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:image/image.dart' as img;
-import 'package:image_processing/app/shared/service/convolucao_service.dart';
-import 'package:image_processing/app/shared/service/image_service.dart';
+import 'package:image_processing/app/shared/repositories/imagem_repository.dart';
 import 'package:mobx/mobx.dart';
 
 part 'home_store.g.dart';
@@ -17,13 +17,23 @@ part 'home_store.g.dart';
 class HomeStore = HomeStoreBase with _$HomeStore;
 
 abstract class HomeStoreBase with Store {
-  final ImageService imageService = Modular.get();
   @observable
   double sliderGamma = 1;
   @observable
   double sliderContrast = 1;
   @observable
   bool showHistograma = false;
+  @observable
+  bool negativoRGB = false;
+
+  @observable
+  Uint8List? imagem;
+  @observable
+  Uint8List? imagemOriginal;
+
+  String? imagemName;
+
+  final ImagemRepository _repository = Modular.get();
 
   Future<void> abrirImagem() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -33,10 +43,14 @@ abstract class HomeStoreBase with Store {
     );
     if (result != null) {
       if (kIsWeb) {
-        imageService.updateImage(img.decodeImage(result.files.single.bytes!)!);
+        imagemName = result.files.single.name;
+        imagemOriginal = result.files.single.bytes!;
+        imagem = imagemOriginal;
       } else {
+        imagemName = result.files.single.name;
         File file = File(result.files.single.path!);
-        imageService.updateImage(img.decodeImage(file.readAsBytesSync())!);
+        imagemOriginal = file.readAsBytesSync();
+        imagem = imagemOriginal;
       }
     } else {
       asuka.showSnackBar(
@@ -49,17 +63,164 @@ abstract class HomeStoreBase with Store {
   }
 
   void convolucao() {
-    ConvolucaoService conv = Modular.get();
+    // asuka.showDialog(
+    //   barrierDismissible: false,
+    //   barrierColor: Colors.transparent,
+    //   builder: (context) => AlertDialog(
+    //     title: const Text("Convolução"),
+    //     actions: <Widget>[
+    //       TextButton(
+    //         child: const Text('Aplicar'),
+    //         onPressed: () {
+    //           imageService.convolucao(conv.matrizes[conv.type]!);
+    //           Navigator.of(context).pop();
+    //         },
+    //       ),
+    //       TextButton(
+    //         child: const Text('Fechar'),
+    //         onPressed: Navigator.of(context).pop,
+    //       ),
+    //     ],
+    //     content: Observer(
+    //       builder: (_) => SingleChildScrollView(
+    //         child: Column(
+    //           children: [
+    //             Row(
+    //               children: [
+    //                 TextButton(
+    //                   onPressed: () => conv.trocaTipo(Matrizes.m3X3),
+    //                   child: const Text("3x3"),
+    //                 ),
+    //                 TextButton(
+    //                   onPressed: () => conv.trocaTipo(Matrizes.m5X5),
+    //                   child: const Text("5x5"),
+    //                 ),
+    //                 TextButton(
+    //                   onPressed: () => conv.trocaTipo(Matrizes.m7X7),
+    //                   child: const Text("7x7"),
+    //                 ),
+    //                 TextButton(
+    //                   onPressed: () => conv.trocaTipo(Matrizes.m9X9),
+    //                   child: const Text("9x9"),
+    //                 ),
+    //               ],
+    //             ),
+    //             conv.geraForm,
+    //           ],
+    //         ),
+    //       ),
+    //     ),
+    //   ),
+    // );
+  }
+
+  @action
+  Future<void> blackAndWhite() async {
+    imagem = null;
+    try {
+      imagem = (await _repository.blackAndWhite(
+        imagemName!,
+        imagemOriginal!,
+      ))
+          .data;
+    } on DioError {
+      imagem = imagemOriginal;
+    }
+  }
+
+  @action
+  Future<void> grayscalePonderado() async {
+    imagem = null;
+    try {
+      imagem = (await _repository.grayscalePonderado(
+        imagemName!,
+        imagemOriginal!,
+      ))
+          .data;
+    } on DioError {
+      imagem = imagemOriginal;
+    }
+  }
+
+  @action
+  Future<void> grayscaleMedia() async {
+    imagem = null;
+    try {
+      imagem = (await _repository.grayscaleMedia(
+        imagemName!,
+        imagemOriginal!,
+      ))
+          .data;
+    } on DioError {
+      imagem = imagemOriginal;
+    }
+  }
+
+  @action
+  Future<void> sepia() async {
+    imagem = null;
+    try {
+      imagem = (await _repository.sepia(
+        imagemName!,
+        imagemOriginal!,
+      ))
+          .data;
+    } on DioError {
+      imagem = imagemOriginal;
+    }
+  }
+
+  @action
+  Future<void> hsv() async {
+    imagem = null;
+    try {
+      imagem = (await _repository.hsv(
+        imagemName!,
+        imagemOriginal!,
+      ))
+          .data;
+    } on DioError {
+      imagem = imagemOriginal;
+    }
+  }
+
+  @action
+  Future<void> hsvCV2() async {
+    imagem = null;
+    try {
+      imagem = (await _repository.hsvCV2(
+        imagemName!,
+        imagemOriginal!,
+      ))
+          .data;
+    } on DioError {
+      imagem = imagemOriginal;
+    }
+  }
+
+  @action
+  void negativo() {
+    negativoRGB = false;
     asuka.showDialog(
       barrierDismissible: false,
       barrierColor: Colors.transparent,
       builder: (context) => AlertDialog(
-        title: const Text("Convolução"),
+        title: const Text("Negativo"),
         actions: <Widget>[
           TextButton(
-            child: const Text('Aplicar'),
-            onPressed: () {
-              imageService.convolucao(conv.matrizes[conv.type]!);
+            child: const Text('OK'),
+            onPressed: () async {
+              imagem = null;
+              try {
+                imagem = (await _repository.negativo(
+                  imagemName!,
+                  imagemOriginal!,
+                  negativoRGB,
+                ))
+                    .data;
+              } on DioError {
+                imagem = imagemOriginal;
+              }
               Navigator.of(context).pop();
             },
           ),
@@ -69,45 +230,46 @@ abstract class HomeStoreBase with Store {
           ),
         ],
         content: Observer(
-          builder: (_) => SingleChildScrollView(
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    TextButton(
-                      onPressed: () => conv.trocaTipo(Matrizes.m3X3),
-                      child: const Text("3x3"),
-                    ),
-                    TextButton(
-                      onPressed: () => conv.trocaTipo(Matrizes.m5X5),
-                      child: const Text("5x5"),
-                    ),
-                    TextButton(
-                      onPressed: () => conv.trocaTipo(Matrizes.m7X7),
-                      child: const Text("7x7"),
-                    ),
-                    TextButton(
-                      onPressed: () => conv.trocaTipo(Matrizes.m9X9),
-                      child: const Text("9x9"),
-                    ),
-                  ],
-                ),
-                conv.geraForm,
-              ],
-            ),
+          builder: (_) => Row(
+            children: [
+              Checkbox(
+                value: negativoRGB,
+                onChanged: negativoRGBMuda,
+              ),
+              const Text('RGB?'),
+            ],
           ),
         ),
       ),
     );
   }
 
-  void gammaCorrection() {
+  @action
+  void log() {
+    sliderContrast = 1;
     asuka.showDialog(
       barrierDismissible: false,
       barrierColor: Colors.transparent,
       builder: (context) => AlertDialog(
-        title: const Text("Correção de Gama"),
+        title: const Text("Transformação Logaritmica"),
         actions: <Widget>[
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () async {
+              imagem = null;
+              try {
+                imagem = (await _repository.log(
+                  imagemName!,
+                  imagemOriginal!,
+                  sliderContrast,
+                ))
+                    .data;
+              } on DioError {
+                imagem = imagemOriginal;
+              }
+              Navigator.of(context).pop();
+            },
+          ),
           TextButton(
             child: const Text('Fechar'),
             onPressed: Navigator.of(context).pop,
@@ -116,21 +278,8 @@ abstract class HomeStoreBase with Store {
         content: Observer(
           builder: (_) => Column(
             children: [
-              const Text("Gamma:"),
-              Slider(
-                onChangeEnd: (_) =>
-                    imageService.transfPot(sliderGamma, sliderContrast),
-                min: 0,
-                max: 2,
-                value: sliderGamma,
-                onChanged: changeGamma,
-                label: "$sliderGamma",
-              ),
-              Text(sliderGamma.toStringAsFixed(2)),
               const Text("Contraste:"),
               Slider(
-                onChangeEnd: (_) =>
-                    imageService.transfPot(sliderGamma, sliderContrast),
                 min: 0,
                 max: 2,
                 value: sliderContrast,
@@ -145,9 +294,88 @@ abstract class HomeStoreBase with Store {
     );
   }
 
+
+  @action
+  void gamma() {
+    sliderGamma = 1;
+    sliderContrast = 1;
+    asuka.showDialog(
+      barrierDismissible: false,
+      barrierColor: Colors.transparent,
+      builder: (context) => AlertDialog(
+        title: const Text("Correção de Gama"),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () async {
+              imagem = null;
+              try {
+                imagem = (await _repository.gamma(
+                  imagemName!,
+                  imagemOriginal!,
+                  sliderContrast,
+                  sliderGamma,
+                ))
+                    .data;
+              } on DioError {
+                imagem = imagemOriginal;
+              }
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: const Text('Fechar'),
+            onPressed: Navigator.of(context).pop,
+          ),
+        ],
+        content: Observer(
+          builder: (_) => Column(
+            children: [
+              const Text("Gamma:"),
+              Slider(
+                min: 0,
+                max: 2,
+                value: sliderGamma,
+                onChanged: changeGamma,
+                label: "$sliderGamma",
+              ),
+              Text(sliderGamma.toStringAsFixed(2)),
+              const Text("Contraste:"),
+              Slider(
+                min: 0,
+                max: 2,
+                value: sliderContrast,
+                onChanged: changeContrast,
+                label: "$sliderContrast",
+              ),
+              Text(sliderContrast.toStringAsFixed(2)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
+  @action
+  void restaurarImagem() {
+    imagem = imagemOriginal;
+  }
+
+  @action
+  void fechar() {
+    imagemOriginal = null;
+    imagem = null;
+  }
+
   @action
   void histograma() {
     showHistograma = !showHistograma;
+  }
+
+  @action
+  void negativoRGBMuda(bool? value) {
+    negativoRGB = value ?? false;
   }
 
   @action
