@@ -690,6 +690,99 @@ abstract class HomeStoreBase with Store {
   }
 
   @action
+  void sobel() {
+    radio = 0;
+    isRGB = false;
+    asuka.showDialog(
+      barrierDismissible: false,
+      barrierColor: Colors.transparent,
+      builder: (context) => AlertDialog(
+        title: const Text("Sobel"),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () async {
+              Navigator.of(context).pop();
+              imagem = null;
+              try {
+                imagem = (await _repository.sobel(
+                  imagemName!,
+                  imagemOriginal!,
+                  radio,
+                  isRGB,
+                ))
+                    .data;
+              } on DioError {
+                imagem = imagemOriginal;
+              }
+            },
+          ),
+          TextButton(
+            child: const Text('Fechar'),
+            onPressed: Navigator.of(context).pop,
+          ),
+        ],
+        content: Observer(
+          builder: (_) => SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Checkbox(
+                      value: isRGB,
+                      onChanged: changeIsRGB,
+                    ),
+                    const Text('Normaliza?'),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Radio(
+                        value: 0,
+                        groupValue: radio,
+                        onChanged: changeRadio,
+                      ),
+                      const Text('X'),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Radio(
+                        value: 1,
+                        groupValue: radio,
+                        onChanged: changeRadio,
+                      ),
+                      const Text('Y'),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Radio(
+                        value: 2,
+                        groupValue: radio,
+                        onChanged: changeRadio,
+                      ),
+                      const Text('X & Y'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @action
   void restaurarImagem() {
     imagem = imagemOriginal;
   }

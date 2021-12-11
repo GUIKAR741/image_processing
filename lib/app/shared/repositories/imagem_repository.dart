@@ -218,6 +218,26 @@ class ImagemRepository with BaseRepository {
     );
   }
 
+  Future<Response> sobel(
+    String imagemName,
+    Uint8List imagem,
+    int bordas,
+    bool normaliza,
+  ) async {
+    FormData formData = FormData.fromMap({
+      'imagem': MultipartFile.fromBytes(
+        imagem,
+        filename: imagemName,
+      ),
+      "bordas": bordas,
+      "normaliza": normaliza ? 1 : 0,
+    });
+    return await _service.client.post(
+      "${DioService.baseUrl}/sobel",
+      data: formData,
+    );
+  }
+
   @override
   void dispose() {}
 }

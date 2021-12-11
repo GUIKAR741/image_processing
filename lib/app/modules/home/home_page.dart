@@ -109,7 +109,7 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                       child: const Text("Laplaciano"),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: controller.sobel,
                       child: const Text("Sobel"),
                     ),
                     ElevatedButton(

@@ -304,6 +304,17 @@ mixin _$HomeStore on HomeStoreBase, Store {
   }
 
   @override
+  void sobel() {
+    final _$actionInfo = _$HomeStoreBaseActionController.startAction(
+        name: 'HomeStoreBase.sobel');
+    try {
+      return super.sobel();
+    } finally {
+      _$HomeStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void restaurarImagem() {
     final _$actionInfo = _$HomeStoreBaseActionController.startAction(
         name: 'HomeStoreBase.restaurarImagem');
