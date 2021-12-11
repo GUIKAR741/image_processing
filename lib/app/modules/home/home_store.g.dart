@@ -39,33 +39,138 @@ mixin _$HomeStore on HomeStoreBase, Store {
     });
   }
 
-  final _$showHistogramaAtom = Atom(name: 'HomeStoreBase.showHistograma');
+  final _$radioAtom = Atom(name: 'HomeStoreBase.radio');
 
   @override
-  bool get showHistograma {
-    _$showHistogramaAtom.reportRead();
-    return super.showHistograma;
+  int get radio {
+    _$radioAtom.reportRead();
+    return super.radio;
   }
 
   @override
-  set showHistograma(bool value) {
-    _$showHistogramaAtom.reportWrite(value, super.showHistograma, () {
-      super.showHistograma = value;
+  set radio(int value) {
+    _$radioAtom.reportWrite(value, super.radio, () {
+      super.radio = value;
     });
   }
 
-  final _$negativoRGBAtom = Atom(name: 'HomeStoreBase.negativoRGB');
+  final _$isRGBAtom = Atom(name: 'HomeStoreBase.isRGB');
 
   @override
-  bool get negativoRGB {
-    _$negativoRGBAtom.reportRead();
-    return super.negativoRGB;
+  bool get isRGB {
+    _$isRGBAtom.reportRead();
+    return super.isRGB;
   }
 
   @override
-  set negativoRGB(bool value) {
-    _$negativoRGBAtom.reportWrite(value, super.negativoRGB, () {
-      super.negativoRGB = value;
+  set isRGB(bool value) {
+    _$isRGBAtom.reportWrite(value, super.isRGB, () {
+      super.isRGB = value;
+    });
+  }
+
+  final _$mostraAtom = Atom(name: 'HomeStoreBase.mostra');
+
+  @override
+  bool get mostra {
+    _$mostraAtom.reportRead();
+    return super.mostra;
+  }
+
+  @override
+  set mostra(bool value) {
+    _$mostraAtom.reportWrite(value, super.mostra, () {
+      super.mostra = value;
+    });
+  }
+
+  final _$equalizaAtom = Atom(name: 'HomeStoreBase.equaliza');
+
+  @override
+  bool get equaliza {
+    _$equalizaAtom.reportRead();
+    return super.equaliza;
+  }
+
+  @override
+  set equaliza(bool value) {
+    _$equalizaAtom.reportWrite(value, super.equaliza, () {
+      super.equaliza = value;
+    });
+  }
+
+  final _$value1Atom = Atom(name: 'HomeStoreBase.value1');
+
+  @override
+  double get value1 {
+    _$value1Atom.reportRead();
+    return super.value1;
+  }
+
+  @override
+  set value1(double value) {
+    _$value1Atom.reportWrite(value, super.value1, () {
+      super.value1 = value;
+    });
+  }
+
+  final _$value2Atom = Atom(name: 'HomeStoreBase.value2');
+
+  @override
+  double get value2 {
+    _$value2Atom.reportRead();
+    return super.value2;
+  }
+
+  @override
+  set value2(double value) {
+    _$value2Atom.reportWrite(value, super.value2, () {
+      super.value2 = value;
+    });
+  }
+
+  final _$value3Atom = Atom(name: 'HomeStoreBase.value3');
+
+  @override
+  double get value3 {
+    _$value3Atom.reportRead();
+    return super.value3;
+  }
+
+  @override
+  set value3(double value) {
+    _$value3Atom.reportWrite(value, super.value3, () {
+      super.value3 = value;
+    });
+  }
+
+  final _$valuesAtom = Atom(name: 'HomeStoreBase.values');
+
+  @override
+  ObservableList<dynamic> get values {
+    _$valuesAtom.reportRead();
+    return super.values;
+  }
+
+  @override
+  set values(ObservableList<dynamic> value) {
+    _$valuesAtom.reportWrite(value, super.values, () {
+      super.values = value;
+    });
+  }
+
+  final _$imagemLocalAtom = Atom(name: 'HomeStoreBase.imagemLocal');
+
+  @override
+  Uint8List? get imagemLocal {
+    _$imagemLocalAtom.reportRead();
+    return super.imagemLocal;
+  }
+
+  @override
+  set imagemLocal(Uint8List? value) {
+    _$imagemLocalAtom.reportWrite(value, super.imagemLocal, () {
+      super.imagemLocal = value;
     });
   }
 
@@ -144,6 +249,13 @@ mixin _$HomeStore on HomeStoreBase, Store {
     return _$hsvCV2AsyncAction.run(() => super.hsvCV2());
   }
 
+  final _$histogramaAsyncAction = AsyncAction('HomeStoreBase.histograma');
+
+  @override
+  Future<void> histograma() {
+    return _$histogramaAsyncAction.run(() => super.histograma());
+  }
+
   final _$HomeStoreBaseActionController =
       ActionController(name: 'HomeStoreBase');
 
@@ -181,6 +293,17 @@ mixin _$HomeStore on HomeStoreBase, Store {
   }
 
   @override
+  void laplaciano() {
+    final _$actionInfo = _$HomeStoreBaseActionController.startAction(
+        name: 'HomeStoreBase.laplaciano');
+    try {
+      return super.laplaciano();
+    } finally {
+      _$HomeStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void restaurarImagem() {
     final _$actionInfo = _$HomeStoreBaseActionController.startAction(
         name: 'HomeStoreBase.restaurarImagem');
@@ -203,22 +326,33 @@ mixin _$HomeStore on HomeStoreBase, Store {
   }
 
   @override
-  void histograma() {
+  void changeIsRGB(bool? value) {
     final _$actionInfo = _$HomeStoreBaseActionController.startAction(
-        name: 'HomeStoreBase.histograma');
+        name: 'HomeStoreBase.changeIsRGB');
     try {
-      return super.histograma();
+      return super.changeIsRGB(value);
     } finally {
       _$HomeStoreBaseActionController.endAction(_$actionInfo);
     }
   }
 
   @override
-  void negativoRGBMuda(bool? value) {
+  void changeMostra(bool? value) {
     final _$actionInfo = _$HomeStoreBaseActionController.startAction(
-        name: 'HomeStoreBase.negativoRGBMuda');
+        name: 'HomeStoreBase.changeMostra');
     try {
-      return super.negativoRGBMuda(value);
+      return super.changeMostra(value);
+    } finally {
+      _$HomeStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void changeEqualiza(bool? value) {
+    final _$actionInfo = _$HomeStoreBaseActionController.startAction(
+        name: 'HomeStoreBase.changeEqualiza');
+    try {
+      return super.changeEqualiza(value);
     } finally {
       _$HomeStoreBaseActionController.endAction(_$actionInfo);
     }
@@ -247,12 +381,30 @@ mixin _$HomeStore on HomeStoreBase, Store {
   }
 
   @override
+  void changeRadio(int? value) {
+    final _$actionInfo = _$HomeStoreBaseActionController.startAction(
+        name: 'HomeStoreBase.changeRadio');
+    try {
+      return super.changeRadio(value);
+    } finally {
+      _$HomeStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 sliderGamma: ${sliderGamma},
 sliderContrast: ${sliderContrast},
-showHistograma: ${showHistograma},
-negativoRGB: ${negativoRGB},
+radio: ${radio},
+isRGB: ${isRGB},
+mostra: ${mostra},
+equaliza: ${equaliza},
+value1: ${value1},
+value2: ${value2},
+value3: ${value3},
+values: ${values},
+imagemLocal: ${imagemLocal},
 imagem: ${imagem},
 imagemOriginal: ${imagemOriginal}
     ''';

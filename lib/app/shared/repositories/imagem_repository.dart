@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -9,7 +10,10 @@ import 'base_repository.dart';
 class ImagemRepository with BaseRepository {
   final DioService _service = Modular.get();
 
-  Future<Response> blackAndWhite(String imagemName, Uint8List imagem) async {
+  Future<Response> blackAndWhite(
+    String imagemName,
+    Uint8List imagem,
+  ) async {
     var formData = FormData.fromMap({
       'imagem': MultipartFile.fromBytes(
         imagem,
@@ -23,7 +27,9 @@ class ImagemRepository with BaseRepository {
   }
 
   Future<Response> grayscalePonderado(
-      String imagemName, Uint8List imagem) async {
+    String imagemName,
+    Uint8List imagem,
+  ) async {
     var formData = FormData.fromMap({
       'imagem': MultipartFile.fromBytes(
         imagem,
@@ -63,7 +69,10 @@ class ImagemRepository with BaseRepository {
   }
 
   Future<Response> negativo(
-      String imagemName, Uint8List imagem, bool rgb) async {
+    String imagemName,
+    Uint8List imagem,
+    bool rgb,
+  ) async {
     var formData = FormData.fromMap({
       'imagem': MultipartFile.fromBytes(
         imagem,
@@ -133,7 +142,78 @@ class ImagemRepository with BaseRepository {
       'gamma': gamma,
     });
     return await _service.client.post(
-      "${DioService.baseUrl}/log",
+      "${DioService.baseUrl}/gamma",
+      data: formData,
+    );
+  }
+
+  Future<Response> histograma(
+    String imagemName,
+    Uint8List imagem, {
+    bool? mostraHistograma,
+    bool? isRGB,
+    bool? equalizar,
+    List? espaco,
+  }) async {
+    Map<String, dynamic> data = {
+      'imagem': MultipartFile.fromBytes(
+        imagem,
+        filename: imagemName,
+      ),
+    };
+    if (mostraHistograma != null) {
+      data['mostraHistograma'] = mostraHistograma ? 1 : 0;
+    }
+    if (isRGB != null) {
+      data['isRGB'] = isRGB ? 1 : 0;
+    }
+    if (equalizar != null) {
+      data['equalizar'] = equalizar ? 1 : 0;
+    }
+    if (espaco != null) {
+      data['espaco'] = json.encode(espaco);
+    }
+    FormData formData = FormData.fromMap(data);
+    return await _service.client.post(
+      "${DioService.baseUrl}/histograma",
+      data: formData,
+    );
+  }
+
+  Future<Response> convolucao(
+    String imagemName,
+    Uint8List imagem,
+    int tamanho,
+    List matriz,
+  ) async {
+    FormData formData = FormData.fromMap({
+      'imagem': MultipartFile.fromBytes(
+        imagem,
+        filename: imagemName,
+      ),
+      "tamanho": tamanho,
+      "matriz": json.encode(matriz),
+    });
+    return await _service.client.post(
+      "${DioService.baseUrl}/convolucao",
+      data: formData,
+    );
+  }
+
+  Future<Response> laplaciano(
+    String imagemName,
+    Uint8List imagem,
+    int bordas,
+  ) async {
+    FormData formData = FormData.fromMap({
+      'imagem': MultipartFile.fromBytes(
+        imagem,
+        filename: imagemName,
+      ),
+      "bordas": bordas,
+    });
+    return await _service.client.post(
+      "${DioService.baseUrl}/laplaciano",
       data: formData,
     );
   }

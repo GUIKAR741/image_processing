@@ -86,11 +86,11 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                       child: const Text("Trans. Potencia (Gamma Correction)"),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: controller.histograma,
                       child: const Text("Intensidade"),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: controller.convolucao,
                       child: const Text("Convolução"),
                     ),
                     !kIsWeb
@@ -99,6 +99,35 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                             child: const Text("Salvar"),
                           )
                         : Container(),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: controller.laplaciano,
+                      child: const Text("Laplaciano"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: const Text("Sobel"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: const Text("Media"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: const Text("Media Geometrica"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: const Text("Media Harmonica"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: const Text("Media Contra Harmonica"),
+                    ),
                   ],
                 ),
                 Center(

@@ -15,7 +15,6 @@ class DioService extends Disposable {
       InterceptorsWrapper(
         onError: (DioError e, handler) {
           print(e.message);
-          print(e.response!.data);
           return handler.next(e);
         },
       ),
