@@ -238,6 +238,123 @@ class ImagemRepository with BaseRepository {
     );
   }
 
+  Future<Response> mean(
+    String imagemName,
+    Uint8List imagem,
+    int tamanho,
+  ) async {
+    FormData formData = FormData.fromMap({
+      'imagem': MultipartFile.fromBytes(
+        imagem,
+        filename: imagemName,
+      ),
+      "tamanho": tamanho,
+    });
+    return await _service.client.post(
+      "${DioService.baseUrl}/mean",
+      data: formData,
+    );
+  }
+
+  Future<Response> geometric(
+    String imagemName,
+    Uint8List imagem,
+    int tamanho,
+  ) async {
+    FormData formData = FormData.fromMap({
+      'imagem': MultipartFile.fromBytes(
+        imagem,
+        filename: imagemName,
+      ),
+      "tamanho": tamanho,
+    });
+    return await _service.client.post(
+      "${DioService.baseUrl}/geometric",
+      data: formData,
+    );
+  }
+
+  Future<Response> harmonic(
+    String imagemName,
+    Uint8List imagem,
+    int tamanho,
+  ) async {
+    FormData formData = FormData.fromMap({
+      'imagem': MultipartFile.fromBytes(
+        imagem,
+        filename: imagemName,
+      ),
+      "tamanho": tamanho,
+    });
+    return await _service.client.post(
+      "${DioService.baseUrl}/harmonic",
+      data: formData,
+    );
+  }
+
+  Future<Response> contraHarmonic(
+    String imagemName,
+    Uint8List imagem,
+    int tamanho,
+    double q,
+  ) async {
+    FormData formData = FormData.fromMap({
+      'imagem': MultipartFile.fromBytes(
+        imagem,
+        filename: imagemName,
+      ),
+      "tamanho": tamanho,
+      "q": q,
+    });
+    return await _service.client.post(
+      "${DioService.baseUrl}/contraHarmonic",
+      data: formData,
+    );
+  }
+
+  Future<Response> rgb2hsv(
+    int r,
+    int g,
+    int b,
+  ) async {
+    FormData formData = FormData.fromMap({
+      "r": r,
+      "g": g,
+      "b": b,
+    });
+    return await _service.client.post(
+      "${DioService.baseUrl}/rgb2hsv",
+      data: formData,
+      options: Options(
+        responseType: ResponseType.json,
+      ),
+    );
+  }
+
+  Future<Response> chromakey(
+    String imagemName,
+    Uint8List imagem,
+    int r,
+    int g,
+    int b,
+    int d,
+  ) async {
+    FormData formData = FormData.fromMap({
+      'imagem': MultipartFile.fromBytes(
+        imagem,
+        filename: imagemName,
+      ),
+      "r": r,
+      "g": g,
+      "b": b,
+      "d": d,
+    });
+    return await _service.client.post(
+      "${DioService.baseUrl}/chromakey",
+      data: formData,
+    );
+  }
+
   @override
   void dispose() {}
 }

@@ -37,6 +37,11 @@ abstract class HomeStoreBase with Store {
   @observable
   double value3 = 0;
   @observable
+  double value4 = 0;
+  @observable
+  ObservableMap<String, dynamic> valuesMapped =
+      ObservableMap<String, dynamic>();
+  @observable
   ObservableList values = ObservableList();
 
   @observable
@@ -532,7 +537,7 @@ abstract class HomeStoreBase with Store {
                 imagem = (await _repository.convolucao(
                   imagemName!,
                   imagemOriginal!,
-                  3,
+                  conv.tamanho,
                   listaMatriz,
                 ))
                     .data;
@@ -773,6 +778,488 @@ abstract class HomeStoreBase with Store {
                       const Text('X & Y'),
                     ],
                   ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void mean() {
+    value1 = 3;
+    asuka.showDialog(
+      barrierDismissible: false,
+      barrierColor: Colors.transparent,
+      builder: (context) => AlertDialog(
+        title: const Text("Filtro Media"),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Aplicar'),
+            onPressed: () async {
+              Navigator.of(context).pop();
+              imagem = null;
+              try {
+                imagem = (await _repository.mean(
+                  imagemName!,
+                  imagemOriginal!,
+                  value1.toInt(),
+                ))
+                    .data;
+              } on DioError {
+                imagem = imagemOriginal;
+              }
+            },
+          ),
+          TextButton(
+            child: const Text('Fechar'),
+            onPressed: Navigator.of(context).pop,
+          ),
+        ],
+        content: Observer(
+          builder: (_) => SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    TextButton(
+                      onPressed: () => value1 = 3,
+                      child: Text(
+                        "3x3",
+                        style: TextStyle(
+                          color: value1 == 3 ? Colors.black : null,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => value1 = 5,
+                      child: Text(
+                        "5x5",
+                        style: TextStyle(
+                          color: value1 == 5 ? Colors.black : null,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => value1 = 7,
+                      child: Text(
+                        "7x7",
+                        style: TextStyle(
+                          color: value1 == 7 ? Colors.black : null,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => value1 = 9,
+                      child: Text(
+                        "9x9",
+                        style: TextStyle(
+                          color: value1 == 9 ? Colors.black : null,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void geometric() {
+    value1 = 3;
+    asuka.showDialog(
+      barrierDismissible: false,
+      barrierColor: Colors.transparent,
+      builder: (context) => AlertDialog(
+        title: const Text("Filtro Media Geometrica"),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Aplicar'),
+            onPressed: () async {
+              Navigator.of(context).pop();
+              imagem = null;
+              try {
+                imagem = (await _repository.geometric(
+                  imagemName!,
+                  imagemOriginal!,
+                  value1.toInt(),
+                ))
+                    .data;
+              } on DioError {
+                imagem = imagemOriginal;
+              }
+            },
+          ),
+          TextButton(
+            child: const Text('Fechar'),
+            onPressed: Navigator.of(context).pop,
+          ),
+        ],
+        content: Observer(
+          builder: (_) => SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    TextButton(
+                      onPressed: () => value1 = 3,
+                      child: Text(
+                        "3x3",
+                        style: TextStyle(
+                          color: value1 == 3 ? Colors.black : null,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => value1 = 5,
+                      child: Text(
+                        "5x5",
+                        style: TextStyle(
+                          color: value1 == 5 ? Colors.black : null,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => value1 = 7,
+                      child: Text(
+                        "7x7",
+                        style: TextStyle(
+                          color: value1 == 7 ? Colors.black : null,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => value1 = 9,
+                      child: Text(
+                        "9x9",
+                        style: TextStyle(
+                          color: value1 == 9 ? Colors.black : null,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void harmonic() {
+    value1 = 3;
+    asuka.showDialog(
+      barrierDismissible: false,
+      barrierColor: Colors.transparent,
+      builder: (context) => AlertDialog(
+        title: const Text("Filtro Media Harmonica"),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Aplicar'),
+            onPressed: () async {
+              Navigator.of(context).pop();
+              imagem = null;
+              try {
+                imagem = (await _repository.harmonic(
+                  imagemName!,
+                  imagemOriginal!,
+                  value1.toInt(),
+                ))
+                    .data;
+              } on DioError {
+                imagem = imagemOriginal;
+              }
+            },
+          ),
+          TextButton(
+            child: const Text('Fechar'),
+            onPressed: Navigator.of(context).pop,
+          ),
+        ],
+        content: Observer(
+          builder: (_) => SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    TextButton(
+                      onPressed: () => value1 = 3,
+                      child: Text(
+                        "3x3",
+                        style: TextStyle(
+                          color: value1 == 3 ? Colors.black : null,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => value1 = 5,
+                      child: Text(
+                        "5x5",
+                        style: TextStyle(
+                          color: value1 == 5 ? Colors.black : null,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => value1 = 7,
+                      child: Text(
+                        "7x7",
+                        style: TextStyle(
+                          color: value1 == 7 ? Colors.black : null,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => value1 = 9,
+                      child: Text(
+                        "9x9",
+                        style: TextStyle(
+                          color: value1 == 9 ? Colors.black : null,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void contraHarmonic() {
+    value1 = 3;
+    value2 = 0;
+    asuka.showDialog(
+      barrierDismissible: false,
+      barrierColor: Colors.transparent,
+      builder: (context) => AlertDialog(
+        title: const Text("Filtro Media Contra Harmonica"),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Aplicar'),
+            onPressed: () async {
+              Navigator.of(context).pop();
+              imagem = null;
+              try {
+                imagem = (await _repository.contraHarmonic(
+                  imagemName!,
+                  imagemOriginal!,
+                  value1.toInt(),
+                  value2,
+                ))
+                    .data;
+              } on DioError {
+                imagem = imagemOriginal;
+              }
+            },
+          ),
+          TextButton(
+            child: const Text('Fechar'),
+            onPressed: Navigator.of(context).pop,
+          ),
+        ],
+        content: Observer(
+          builder: (_) => SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    TextButton(
+                      onPressed: () => value1 = 3,
+                      child: Text(
+                        "3x3",
+                        style: TextStyle(
+                          color: value1 == 3 ? Colors.black : null,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => value1 = 5,
+                      child: Text(
+                        "5x5",
+                        style: TextStyle(
+                          color: value1 == 5 ? Colors.black : null,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => value1 = 7,
+                      child: Text(
+                        "7x7",
+                        style: TextStyle(
+                          color: value1 == 7 ? Colors.black : null,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => value1 = 9,
+                      child: Text(
+                        "9x9",
+                        style: TextStyle(
+                          color: value1 == 9 ? Colors.black : null,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Text("Q: ${value2.toStringAsFixed(2)}"),
+                Slider(
+                  min: -2,
+                  max: 2,
+                  value: value2,
+                  onChanged: (v) => value2 = v,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @action
+  void rgb2hsv() {
+    value1 = 0;
+    value2 = 0;
+    value3 = 0;
+    valuesMapped.clear();
+    asuka.showDialog(
+      barrierDismissible: false,
+      barrierColor: Colors.transparent,
+      builder: (context) => AlertDialog(
+        title: const Text("Filtro Media Contra Harmonica"),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Fechar'),
+            onPressed: Navigator.of(context).pop,
+          ),
+        ],
+        content: Observer(
+          builder: (_) => SingleChildScrollView(
+            child: Column(
+              children: [
+                Text("R: ${value1.toStringAsFixed(0)}"),
+                Slider(
+                  min: 0,
+                  max: 255,
+                  value: value1,
+                  onChanged: (v) => value1 = v,
+                ),
+                Text("G: ${value2.toStringAsFixed(0)}"),
+                Slider(
+                  min: 0,
+                  max: 255,
+                  value: value2,
+                  onChanged: (v) => value2 = v,
+                ),
+                Text("B: ${value3.toStringAsFixed(0)}"),
+                Slider(
+                  min: 0,
+                  max: 255,
+                  value: value3,
+                  onChanged: (v) => value3 = v,
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    valuesMapped = ((await _repository.rgb2hsv(
+                      value1.toInt(),
+                      value2.toInt(),
+                      value3.toInt(),
+                    ))
+                            .data as Map<String, dynamic>)
+                        .asObservable();
+                    print(valuesMapped.runtimeType);
+                  },
+                  child: const Text("Converter"),
+                ),
+                if (valuesMapped.isNotEmpty)
+                  ListTile(
+                    title: Text(
+                        "H: ${valuesMapped['h']}, S: ${valuesMapped['s']}, V: ${valuesMapped['v']}"),
+                  )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @action
+  void chromakey() {
+    value1 = 0;
+    value2 = 0;
+    value3 = 0;
+    value4 = 0;
+    asuka.showDialog(
+      barrierDismissible: false,
+      barrierColor: Colors.transparent,
+      builder: (context) => AlertDialog(
+        title: const Text("Filtro Media Contra Harmonica"),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Aplicar'),
+            onPressed: () async {
+              Navigator.of(context).pop();
+              imagem = null;
+              try {
+                imagem = (await _repository.chromakey(
+                  imagemName!,
+                  imagemOriginal!,
+                  value1.toInt(),
+                  value2.toInt(),
+                  value3.toInt(),
+                  value4.toInt(),
+                ))
+                    .data;
+              } on DioError {
+                imagem = imagemOriginal;
+              }
+            },
+          ),
+          TextButton(
+            child: const Text('Fechar'),
+            onPressed: Navigator.of(context).pop,
+          ),
+        ],
+        content: Observer(
+          builder: (_) => SingleChildScrollView(
+            child: Column(
+              children: [
+                Text("R: ${value1.toStringAsFixed(0)}"),
+                Slider(
+                  min: 0,
+                  max: 255,
+                  value: value1,
+                  onChanged: (v) => value1 = v,
+                ),
+                Text("G: ${value2.toStringAsFixed(0)}"),
+                Slider(
+                  min: 0,
+                  max: 255,
+                  value: value2,
+                  onChanged: (v) => value2 = v,
+                ),
+                Text("B: ${value3.toStringAsFixed(0)}"),
+                Slider(
+                  min: 0,
+                  max: 255,
+                  value: value3,
+                  onChanged: (v) => value3 = v,
+                ),
+                Text("Distancia da Cor: ${value4.toStringAsFixed(0)}"),
+                Slider(
+                  min: 0,
+                  max: 255,
+                  value: value4,
+                  onChanged: (v) => value4 = v,
                 ),
               ],
             ),

@@ -144,6 +144,36 @@ mixin _$HomeStore on HomeStoreBase, Store {
     });
   }
 
+  final _$value4Atom = Atom(name: 'HomeStoreBase.value4');
+
+  @override
+  double get value4 {
+    _$value4Atom.reportRead();
+    return super.value4;
+  }
+
+  @override
+  set value4(double value) {
+    _$value4Atom.reportWrite(value, super.value4, () {
+      super.value4 = value;
+    });
+  }
+
+  final _$valuesMappedAtom = Atom(name: 'HomeStoreBase.valuesMapped');
+
+  @override
+  ObservableMap<String, dynamic> get valuesMapped {
+    _$valuesMappedAtom.reportRead();
+    return super.valuesMapped;
+  }
+
+  @override
+  set valuesMapped(ObservableMap<String, dynamic> value) {
+    _$valuesMappedAtom.reportWrite(value, super.valuesMapped, () {
+      super.valuesMapped = value;
+    });
+  }
+
   final _$valuesAtom = Atom(name: 'HomeStoreBase.values');
 
   @override
@@ -315,6 +345,28 @@ mixin _$HomeStore on HomeStoreBase, Store {
   }
 
   @override
+  void rgb2hsv() {
+    final _$actionInfo = _$HomeStoreBaseActionController.startAction(
+        name: 'HomeStoreBase.rgb2hsv');
+    try {
+      return super.rgb2hsv();
+    } finally {
+      _$HomeStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void chromakey() {
+    final _$actionInfo = _$HomeStoreBaseActionController.startAction(
+        name: 'HomeStoreBase.chromakey');
+    try {
+      return super.chromakey();
+    } finally {
+      _$HomeStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void restaurarImagem() {
     final _$actionInfo = _$HomeStoreBaseActionController.startAction(
         name: 'HomeStoreBase.restaurarImagem');
@@ -414,6 +466,8 @@ equaliza: ${equaliza},
 value1: ${value1},
 value2: ${value2},
 value3: ${value3},
+value4: ${value4},
+valuesMapped: ${valuesMapped},
 values: ${values},
 imagemLocal: ${imagemLocal},
 imagem: ${imagem},

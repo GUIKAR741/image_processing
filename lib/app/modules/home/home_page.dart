@@ -23,11 +23,28 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
       body: Observer(
         builder: (_) {
           if (controller.imagemOriginal == null) {
-            return Center(
-              child: ElevatedButton(
-                onPressed: () => controller.abrirImagem(),
-                child: const Text("Abrir Imagem"),
-              ),
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      onPressed: controller.abrirImagem,
+                      child: const Text("Abrir Imagem"),
+                    ),
+                  ),
+                ),
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      onPressed: controller.rgb2hsv,
+                      child: const Text("RGB => HSV"),
+                    ),
+                  ),
+                ),
+              ],
             );
           }
           return SingleChildScrollView(
@@ -113,20 +130,40 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                       child: const Text("Sobel"),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: controller.mean,
                       child: const Text("Media"),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: controller.geometric,
                       child: const Text("Media Geometrica"),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: controller.harmonic,
                       child: const Text("Media Harmonica"),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: controller.contraHarmonic,
                       child: const Text("Media Contra Harmonica"),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: controller.chromakey,
+                      child: const Text("Chromakey"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: const Text("Fourrier"),
+                    ),ElevatedButton(
+                      onPressed: () {},
+                      child: const Text("Escala"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: const Text("Rotação"),
                     ),
                   ],
                 ),
