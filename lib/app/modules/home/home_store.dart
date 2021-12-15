@@ -1187,7 +1187,6 @@ abstract class HomeStoreBase with Store {
                     ))
                             .data as Map<String, dynamic>)
                         .asObservable();
-                    print(valuesMapped.runtimeType);
                   },
                   child: const Text("Converter"),
                 ),
@@ -1369,7 +1368,7 @@ abstract class HomeStoreBase with Store {
       barrierDismissible: false,
       barrierColor: Colors.transparent,
       builder: (context) => AlertDialog(
-        title: const Text("Filtro Media Contra Harmonica"),
+        title: const Text("Rotação"),
         actions: <Widget>[
           TextButton(
             child: const Text('Aplicar'),
@@ -1650,7 +1649,7 @@ abstract class HomeStoreBase with Store {
       barrierDismissible: false,
       barrierColor: Colors.transparent,
       builder: (context) => AlertDialog(
-        title: const Text("Intensidades"),
+        title: const Text("Fourrier"),
         actions: <Widget>[
           Observer(
             builder: (_) => radio != 1
