@@ -54,6 +54,7 @@ dependencies:
   file_picker: ^4.2.7
   asuka: ^2.0.0
   dio: ^4.0.4
+  image: ^3.1.0
 
 dev_dependencies:
   flutter_test:

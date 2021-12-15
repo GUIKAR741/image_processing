@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:image/image.dart' as img;
 import 'package:image_processing/app/shared/repositories/imagem_repository.dart';
 import 'package:image_processing/app/shared/services/convolucao_service.dart';
 import 'package:mobx/mobx.dart';
@@ -25,6 +26,8 @@ abstract class HomeStoreBase with Store {
   @observable
   int radio = 1;
   @observable
+  int radioFourrier = 1;
+  @observable
   bool isRGB = false;
   @observable
   bool mostra = false;
@@ -38,6 +41,8 @@ abstract class HomeStoreBase with Store {
   double value3 = 0;
   @observable
   double value4 = 0;
+  @observable
+  double clip = 0;
   @observable
   ObservableMap<String, dynamic> valuesMapped =
       ObservableMap<String, dynamic>();
@@ -53,6 +58,11 @@ abstract class HomeStoreBase with Store {
   Uint8List? imagemOriginal;
 
   String? imagemName;
+
+  @observable
+  Uint8List? imagemEsconder;
+
+  String? imagemNameEsconder;
 
   final ImagemRepository _repository = Modular.get();
 
@@ -89,7 +99,9 @@ abstract class HomeStoreBase with Store {
       fileName: imagemName,
     );
     if (result != null) {
-      File(result).writeAsBytesSync(imagem!);
+      String nome = result.split('/').last;
+      img.Image image = img.decodeImage(imagem!)!;
+      File(result).writeAsBytesSync(img.encodeNamedImage(image, nome)!);
     } else {
       asuka.showSnackBar(
         const SnackBar(
@@ -1134,7 +1146,7 @@ abstract class HomeStoreBase with Store {
       barrierDismissible: false,
       barrierColor: Colors.transparent,
       builder: (context) => AlertDialog(
-        title: const Text("Filtro Media Contra Harmonica"),
+        title: const Text("RGB para HSV"),
         actions: <Widget>[
           TextButton(
             child: const Text('Fechar'),
@@ -1202,7 +1214,7 @@ abstract class HomeStoreBase with Store {
       barrierDismissible: false,
       barrierColor: Colors.transparent,
       builder: (context) => AlertDialog(
-        title: const Text("Filtro Media Contra Harmonica"),
+        title: const Text("Chroma Key"),
         actions: <Widget>[
           TextButton(
             child: const Text('Aplicar'),
@@ -1270,6 +1282,637 @@ abstract class HomeStoreBase with Store {
   }
 
   @action
+  void escala() {
+    value1 = 1;
+    value2 = 1;
+    radio = 1;
+    asuka.showDialog(
+      barrierDismissible: false,
+      barrierColor: Colors.transparent,
+      builder: (context) => AlertDialog(
+        title: const Text("Escala"),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Aplicar'),
+            onPressed: () async {
+              Navigator.of(context).pop();
+              imagem = null;
+              try {
+                imagem = (await _repository.escala(
+                  imagemName!,
+                  imagemOriginal!,
+                  value1,
+                  value2,
+                  radio,
+                ))
+                    .data;
+              } on DioError {
+                imagem = imagemOriginal;
+              }
+            },
+          ),
+          TextButton(
+            child: const Text('Fechar'),
+            onPressed: Navigator.of(context).pop,
+          ),
+        ],
+        content: Observer(
+          builder: (_) => SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Radio(
+                      value: 1,
+                      groupValue: radio,
+                      onChanged: changeRadio,
+                    ),
+                    const Text('Pixel Mais Proximo'),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Radio(
+                      value: 2,
+                      groupValue: radio,
+                      onChanged: changeRadio,
+                    ),
+                    const Text('Bi-Linear'),
+                  ],
+                ),
+                Text("Escala X: ${value1.toStringAsFixed(2)}"),
+                Slider(
+                  min: 0,
+                  max: 2,
+                  value: value1,
+                  onChanged: (v) => value1 = v,
+                ),
+                Text("Escala Y: ${value2.toStringAsFixed(2)}"),
+                Slider(
+                  min: 0,
+                  max: 2,
+                  value: value2,
+                  onChanged: (v) => value2 = v,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @action
+  void rotacao() {
+    value1 = 0;
+    asuka.showDialog(
+      barrierDismissible: false,
+      barrierColor: Colors.transparent,
+      builder: (context) => AlertDialog(
+        title: const Text("Filtro Media Contra Harmonica"),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Aplicar'),
+            onPressed: () async {
+              Navigator.of(context).pop();
+              imagem = null;
+              try {
+                imagem = (await _repository.rotacao(
+                  imagemName!,
+                  imagemOriginal!,
+                  value1.toInt(),
+                ))
+                    .data;
+              } on DioError {
+                imagem = imagemOriginal;
+              }
+            },
+          ),
+          TextButton(
+            child: const Text('Fechar'),
+            onPressed: Navigator.of(context).pop,
+          ),
+        ],
+        content: Observer(
+          builder: (_) => SingleChildScrollView(
+            child: Column(
+              children: [
+                Text("Angulo: ${value1.toStringAsFixed(0)}"),
+                Slider(
+                  min: 0,
+                  max: 360,
+                  value: value1,
+                  onChanged: (v) => value1 = v,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @action
+  void encriptar() {
+    radio = 1;
+    isRGB = false;
+    imagemEsconder = null;
+    imagemNameEsconder = null;
+    Future<void> abrirImg() async {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        allowCompression: false,
+        dialogTitle: "Abrir Imagem",
+      );
+      if (result != null) {
+        if (kIsWeb) {
+          imagemNameEsconder = result.files.single.name;
+          imagemEsconder = result.files.single.bytes!;
+        } else {
+          imagemNameEsconder = result.files.single.name;
+          File file = File(result.files.single.path!);
+          imagemEsconder = file.readAsBytesSync();
+        }
+        isRGB = true;
+      } else {
+        asuka.showSnackBar(
+          const SnackBar(
+            content: Text('Erro ao Abrir Imagem!'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    }
+
+    asuka.showDialog(
+      barrierDismissible: false,
+      barrierColor: Colors.transparent,
+      builder: (context) => AlertDialog(
+        title: const Text("Criptografar"),
+        actions: <Widget>[
+          Observer(
+            builder: (_) => isRGB == true
+                ? TextButton(
+                    child: const Text('Aplicar'),
+                    onPressed: () async {
+                      Navigator.of(context).pop();
+                      imagem = null;
+                      try {
+                        imagem = (await _repository.estenografia(
+                          imagemName!,
+                          imagemOriginal!,
+                          radio,
+                          imagemName2: imagemNameEsconder,
+                          imagem2: imagemEsconder,
+                        ))
+                            .data;
+                      } on DioError {
+                        imagem = imagemOriginal;
+                      }
+                    },
+                  )
+                : Container(),
+          ),
+          TextButton(
+            child: const Text('Fechar'),
+            onPressed: Navigator.of(context).pop,
+          ),
+        ],
+        content: Observer(
+          builder: (_) => SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Radio(
+                      value: 1,
+                      groupValue: radio,
+                      onChanged: changeRadio,
+                    ),
+                    const Text('LSB'),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Radio(
+                      value: 3,
+                      groupValue: radio,
+                      onChanged: changeRadio,
+                    ),
+                    const Text('Padrão'),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: abrirImg,
+                    child: const Text("Abrir Imagem para Esconder"),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @action
+  void decriptar() {
+    radio = 2;
+    asuka.showDialog(
+      barrierDismissible: false,
+      barrierColor: Colors.transparent,
+      builder: (context) => AlertDialog(
+        title: const Text("Descriptografar"),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Aplicar'),
+            onPressed: () async {
+              Navigator.of(context).pop();
+              imagem = null;
+              try {
+                imagem = (await _repository.estenografia(
+                  imagemName!,
+                  imagemOriginal!,
+                  radio,
+                ))
+                    .data;
+              } on DioError {
+                imagem = imagemOriginal;
+              }
+            },
+          ),
+          TextButton(
+            child: const Text('Fechar'),
+            onPressed: Navigator.of(context).pop,
+          ),
+        ],
+        content: Observer(
+          builder: (_) => SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Radio(
+                      value: 2,
+                      groupValue: radio,
+                      onChanged: changeRadio,
+                    ),
+                    const Text('LSB'),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Radio(
+                      value: 4,
+                      groupValue: radio,
+                      onChanged: changeRadio,
+                    ),
+                    const Text('Padrão'),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @action
+  Future<void> fourrier() async {
+    radio = 1;
+    radioFourrier = 1;
+    values.clear();
+    value1 = 0;
+    value2 = 0;
+    value3 = 0;
+    value4 = 0;
+    clip = 1000;
+    isRGB = false;
+    imagemLocal = null;
+    int w = 2000;
+    int h = 2000;
+    void attImagem(Response v) {
+      imagemLocal = v.data;
+    }
+
+    void atualizaTranf({
+      bool mostraTransf = true,
+      void Function(Response v)? callback,
+    }) {
+      callback = callback ?? attImagem;
+      isRGB = true;
+      try {
+        imagemLocal = null;
+        switch (radio) {
+          case 1:
+            _repository
+                .fourrier(
+                  imagemName!,
+                  imagemOriginal!,
+                )
+                .then(callback);
+            break;
+          case 2:
+            _repository
+                .fourrierManual(
+                  imagemName!,
+                  imagemOriginal!,
+                  mostraTransf: mostraTransf,
+                  clip: clip.toInt(),
+                  espaco: values,
+                )
+                .then(callback);
+            break;
+          default:
+            _repository
+                .fourrierFiltros(
+                  imagemName!,
+                  imagemOriginal!,
+                  mostraTransf: mostraTransf,
+                  clip: clip.toInt(),
+                  tipo: radioFourrier.toInt(),
+                  raio: value1.toInt(),
+                  raioInterno: value2.toInt(),
+                  sigma: value3.toInt(),
+                )
+                .then(callback);
+            break;
+        }
+      } on DioError {
+        imagem = imagemOriginal;
+      }
+    }
+
+    asuka.showDialog(
+      barrierDismissible: false,
+      barrierColor: Colors.transparent,
+      builder: (context) => AlertDialog(
+        title: const Text("Intensidades"),
+        actions: <Widget>[
+          Observer(
+            builder: (_) => radio != 1
+                ? TextButton(
+                    child: const Text('OK'),
+                    onPressed: () async {
+                      imagem = null;
+                      atualizaTranf(
+                        mostraTransf: false,
+                        callback: (v) => imagem = v.data,
+                      );
+                      Navigator.of(context).pop();
+                    },
+                  )
+                : Container(),
+          ),
+          TextButton(
+            child: const Text('Fechar'),
+            onPressed: Navigator.of(context).pop,
+          ),
+        ],
+        content: Observer(
+          builder: (_) => SingleChildScrollView(
+            child: Column(
+              children: [
+                Observer(
+                  builder: (_) => isRGB == false
+                      ? Container()
+                      : imagemLocal != null
+                          ? Column(
+                              children: [
+                                Image.memory(
+                                  imagemLocal!,
+                                  width: radio != 1 ? 1000 : null,
+                                  height: radio != 1 ? 1000 : null,
+                                ),
+                              ],
+                            )
+                          : const CircularProgressIndicator(),
+                ),
+                Row(children: [
+                  Radio(
+                    value: 1,
+                    groupValue: radio,
+                    onChanged: changeRadio,
+                  ),
+                  const Text('Fourrier Manual 50x50'),
+                ]),
+                Row(children: [
+                  Radio(
+                    value: 2,
+                    groupValue: radio,
+                    onChanged: changeRadio,
+                  ),
+                  const Text('Filtros Manual'),
+                ]),
+                Row(children: [
+                  Radio(
+                    value: 3,
+                    groupValue: radio,
+                    onChanged: changeRadio,
+                  ),
+                  const Text('Filtros'),
+                ]),
+                Observer(
+                  builder: (_) => radio == 1
+                      ? Container()
+                      : radio == 2
+                          ? Column(
+                              children: [
+                                Column(
+                                  children: values
+                                      .map(
+                                        (i) => ListTile(
+                                          title: Text(
+                                              "(X1, Y1): (${i[0]}, ${i[1]}), (X2, Y2): (${i[2]}, ${i[3]})"),
+                                          trailing: IconButton(
+                                            icon: const Icon(Icons.remove),
+                                            onPressed: () => values.remove(i),
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                                ),
+                                Text("Clip: ${clip.toStringAsFixed(0)}"),
+                                Slider(
+                                  min: 0,
+                                  max: 5000,
+                                  value: clip,
+                                  onChanged: (v) => clip = v,
+                                ),
+                                Text("X1: ${value1.toStringAsFixed(0)}"),
+                                Slider(
+                                  min: 0,
+                                  max: w.toDouble(),
+                                  value: value1,
+                                  onChanged: (v) => value1 = v,
+                                ),
+                                Text("Y1: ${value2.toStringAsFixed(0)}"),
+                                Slider(
+                                  min: 0,
+                                  max: h.toDouble(),
+                                  value: value2,
+                                  onChanged: (v) => value2 = v,
+                                ),
+                                Text("X2: ${value3.toStringAsFixed(0)}"),
+                                Slider(
+                                  min: 0,
+                                  max: w.toDouble(),
+                                  value: value3,
+                                  onChanged: (v) => value3 = v,
+                                ),
+                                Text("Y2: ${value4.toStringAsFixed(0)}"),
+                                Slider(
+                                  min: 0,
+                                  max: h.toDouble(),
+                                  value: value4,
+                                  onChanged: (v) => value4 = v,
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    values.add([
+                                      value1.toInt(),
+                                      value2.toInt(),
+                                      value3.toInt(),
+                                      value4.toInt(),
+                                    ]);
+                                  },
+                                  child: const Text("Adicionar"),
+                                ),
+                              ],
+                            )
+                          : Column(
+                              children: [
+                                Text("Clip: ${clip.toStringAsFixed(0)}"),
+                                Slider(
+                                  min: 0,
+                                  max: 5000,
+                                  value: clip,
+                                  onChanged: (v) => clip = v,
+                                ),
+                                Row(
+                                  children: [
+                                    Radio(
+                                      value: 1,
+                                      groupValue: radioFourrier,
+                                      onChanged: changeRadioFourrier,
+                                    ),
+                                    const Text('Ideal Alta'),
+                                    Radio(
+                                      value: 2,
+                                      groupValue: radioFourrier,
+                                      onChanged: changeRadioFourrier,
+                                    ),
+                                    const Text('Ideal Baixa'),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Radio(
+                                      value: 3,
+                                      groupValue: radioFourrier,
+                                      onChanged: changeRadioFourrier,
+                                    ),
+                                    const Text('Gaussiano Alta'),
+                                    Radio(
+                                      value: 4,
+                                      groupValue: radioFourrier,
+                                      onChanged: changeRadioFourrier,
+                                    ),
+                                    const Text('Gaussiano Baixa'),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Radio(
+                                      value: 5,
+                                      groupValue: radioFourrier,
+                                      onChanged: changeRadioFourrier,
+                                    ),
+                                    const Text('Faixa Ideal Alta'),
+                                    Radio(
+                                      value: 6,
+                                      groupValue: radioFourrier,
+                                      onChanged: changeRadioFourrier,
+                                    ),
+                                    const Text('Faixa Ideal Baixa'),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Radio(
+                                      value: 7,
+                                      groupValue: radioFourrier,
+                                      onChanged: changeRadioFourrier,
+                                    ),
+                                    const Text('Faixa Gaussiano Alta'),
+                                    Radio(
+                                      value: 8,
+                                      groupValue: radioFourrier,
+                                      onChanged: changeRadioFourrier,
+                                    ),
+                                    const Text('Faixa Gaussiano Baixa'),
+                                  ],
+                                ),
+                                Text("Raio: ${value1.toStringAsFixed(0)}"),
+                                Slider(
+                                  min: 0,
+                                  max: 1000,
+                                  value: value1,
+                                  onChanged: (v) => value1 = v,
+                                ),
+                                if (radioFourrier == 5 ||
+                                    radioFourrier == 6 ||
+                                    radioFourrier == 7 ||
+                                    radioFourrier == 8)
+                                  Text(
+                                      "Raio Interno: ${value2.toStringAsFixed(0)}"),
+                                if (radioFourrier == 5 ||
+                                    radioFourrier == 6 ||
+                                    radioFourrier == 7 ||
+                                    radioFourrier == 8)
+                                  Slider(
+                                    min: 0,
+                                    max: 999,
+                                    value: value2,
+                                    onChanged: (v) => value2 = v,
+                                  ),
+                                if (radioFourrier == 3 ||
+                                    radioFourrier == 4 ||
+                                    radioFourrier == 7 ||
+                                    radioFourrier == 8)
+                                  Text("Sigma: ${value3.toStringAsFixed(0)}"),
+                                if (radioFourrier == 3 ||
+                                    radioFourrier == 4 ||
+                                    radioFourrier == 7 ||
+                                    radioFourrier == 8)
+                                  Slider(
+                                    min: 0,
+                                    max: 1000,
+                                    value: value3,
+                                    onChanged: (v) => value3 = v,
+                                  ),
+                              ],
+                            ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: atualizaTranf,
+                    child: const Text("Atualiza"),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @action
   void restaurarImagem() {
     imagem = imagemOriginal;
   }
@@ -1308,5 +1951,10 @@ abstract class HomeStoreBase with Store {
   @action
   void changeRadio(int? value) {
     radio = value ?? 1;
+  }
+
+  @action
+  void changeRadioFourrier(int? value) {
+    radioFourrier = value ?? 1;
   }
 }

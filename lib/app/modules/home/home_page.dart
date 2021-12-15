@@ -155,15 +155,24 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                       child: const Text("Chromakey"),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: controller.fourrier,
                       child: const Text("Fourrier"),
-                    ),ElevatedButton(
-                      onPressed: () {},
+                    ),
+                    ElevatedButton(
+                      onPressed: controller.escala,
                       child: const Text("Escala"),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: controller.rotacao,
                       child: const Text("Rotação"),
+                    ),
+                    ElevatedButton(
+                      onPressed: controller.encriptar,
+                      child: const Text("Encriptar"),
+                    ),
+                    ElevatedButton(
+                      onPressed: controller.decriptar,
+                      child: const Text("Decriptar"),
                     ),
                   ],
                 ),

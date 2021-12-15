@@ -37,7 +37,7 @@ abstract class ConvolucaoServiceBase with Store {
 
   @computed
   List<List<num>> get matrizAtual => matrizes[type]!;
-  
+
   @computed
   int get tamanho => _tamanho[type]!;
 

@@ -355,6 +355,159 @@ class ImagemRepository with BaseRepository {
     );
   }
 
+  Future<Response> escala(
+    String imagemName,
+    Uint8List imagem,
+    double escalaX,
+    double escalaY,
+    int tipo,
+  ) async {
+    FormData formData = FormData.fromMap({
+      'imagem': MultipartFile.fromBytes(
+        imagem,
+        filename: imagemName,
+      ),
+      "escalaX": escalaX,
+      "escalaY": escalaY,
+      "tipo": tipo,
+    });
+    return await _service.client.post(
+      "${DioService.baseUrl}/escala",
+      data: formData,
+    );
+  }
+
+  Future<Response> rotacao(
+    String imagemName,
+    Uint8List imagem,
+    int angulo,
+  ) async {
+    FormData formData = FormData.fromMap({
+      'imagem': MultipartFile.fromBytes(
+        imagem,
+        filename: imagemName,
+      ),
+      "angulo": angulo,
+    });
+    return await _service.client.post(
+      "${DioService.baseUrl}/rotacao",
+      data: formData,
+    );
+  }
+
+  Future<Response> estenografia(
+    String imagemName1,
+    Uint8List imagem1,
+    int tipo, {
+    String? imagemName2,
+    Uint8List? imagem2,
+  }) async {
+    Map<String, dynamic> data = {
+      'imagem1': MultipartFile.fromBytes(
+        imagem1,
+        filename: imagemName1,
+      ),
+      "tipo": tipo,
+    };
+    if (imagemName2 != null && imagem2 != null) {
+      data['imagem2'] = MultipartFile.fromBytes(
+        imagem2,
+        filename: imagemName2,
+      );
+    }
+    FormData formData = FormData.fromMap(data);
+    return await _service.client.post(
+      "${DioService.baseUrl}/estenografia",
+      data: formData,
+    );
+  }
+
+  Future<Response> fourrier(
+    String imagemName,
+    Uint8List imagem,
+  ) async {
+    FormData formData = FormData.fromMap({
+      'imagem': MultipartFile.fromBytes(
+        imagem,
+        filename: imagemName,
+      ),
+    });
+    return await _service.client.post(
+      "${DioService.baseUrl}/fourrier",
+      data: formData,
+    );
+  }
+
+  Future<Response> fourrierManual(
+    String imagemName,
+    Uint8List imagem, {
+    bool? mostraTransf,
+    int? clip,
+    List? espaco,
+  }) async {
+    Map<String, dynamic> data = {
+      'imagem': MultipartFile.fromBytes(
+        imagem,
+        filename: imagemName,
+      ),
+    };
+    if (mostraTransf != null) {
+      data['mostraTransformada'] = mostraTransf ? 1 : 0;
+    }
+    if (clip != null) {
+      data['clip'] = clip;
+    }
+    if (espaco != null && espaco.isNotEmpty) {
+      data['espaco'] = json.encode(espaco);
+    }
+    FormData formData = FormData.fromMap(data);
+    return await _service.client.post(
+      "${DioService.baseUrl}/fourrierManual",
+      data: formData,
+    );
+  }
+
+  Future<Response> fourrierFiltros(
+    String imagemName,
+    Uint8List imagem, {
+    bool? mostraTransf,
+    int? clip,
+    int? tipo,
+    int? raio,
+    int? raioInterno,
+    int? sigma,
+  }) async {
+    Map<String, dynamic> data = {
+      'imagem': MultipartFile.fromBytes(
+        imagem,
+        filename: imagemName,
+      ),
+    };
+    if (mostraTransf != null) {
+      data['mostraTransformada'] = mostraTransf ? 1 : 0;
+    }
+    if (clip != null) {
+      data['clip'] = clip;
+    }
+    if (tipo != null) {
+      data['tipo'] = tipo;
+    }
+    if (raio != null) {
+      data['raio'] = raio;
+    }
+    if (raioInterno != null) {
+      data['raioInterno'] = raioInterno;
+    }
+    if (clip != null) {
+      data['sigma'] = sigma;
+    }
+    FormData formData = FormData.fromMap(data);
+    return await _service.client.post(
+      "${DioService.baseUrl}/fourrierFiltros",
+      data: formData,
+    );
+  }
+
   @override
   void dispose() {}
 }

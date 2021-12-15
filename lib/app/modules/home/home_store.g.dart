@@ -54,6 +54,21 @@ mixin _$HomeStore on HomeStoreBase, Store {
     });
   }
 
+  final _$radioFourrierAtom = Atom(name: 'HomeStoreBase.radioFourrier');
+
+  @override
+  int get radioFourrier {
+    _$radioFourrierAtom.reportRead();
+    return super.radioFourrier;
+  }
+
+  @override
+  set radioFourrier(int value) {
+    _$radioFourrierAtom.reportWrite(value, super.radioFourrier, () {
+      super.radioFourrier = value;
+    });
+  }
+
   final _$isRGBAtom = Atom(name: 'HomeStoreBase.isRGB');
 
   @override
@@ -159,6 +174,21 @@ mixin _$HomeStore on HomeStoreBase, Store {
     });
   }
 
+  final _$clipAtom = Atom(name: 'HomeStoreBase.clip');
+
+  @override
+  double get clip {
+    _$clipAtom.reportRead();
+    return super.clip;
+  }
+
+  @override
+  set clip(double value) {
+    _$clipAtom.reportWrite(value, super.clip, () {
+      super.clip = value;
+    });
+  }
+
   final _$valuesMappedAtom = Atom(name: 'HomeStoreBase.valuesMapped');
 
   @override
@@ -234,6 +264,21 @@ mixin _$HomeStore on HomeStoreBase, Store {
     });
   }
 
+  final _$imagemEsconderAtom = Atom(name: 'HomeStoreBase.imagemEsconder');
+
+  @override
+  Uint8List? get imagemEsconder {
+    _$imagemEsconderAtom.reportRead();
+    return super.imagemEsconder;
+  }
+
+  @override
+  set imagemEsconder(Uint8List? value) {
+    _$imagemEsconderAtom.reportWrite(value, super.imagemEsconder, () {
+      super.imagemEsconder = value;
+    });
+  }
+
   final _$blackAndWhiteAsyncAction = AsyncAction('HomeStoreBase.blackAndWhite');
 
   @override
@@ -284,6 +329,13 @@ mixin _$HomeStore on HomeStoreBase, Store {
   @override
   Future<void> histograma() {
     return _$histogramaAsyncAction.run(() => super.histograma());
+  }
+
+  final _$fourrierAsyncAction = AsyncAction('HomeStoreBase.fourrier');
+
+  @override
+  Future<void> fourrier() {
+    return _$fourrierAsyncAction.run(() => super.fourrier());
   }
 
   final _$HomeStoreBaseActionController =
@@ -361,6 +413,50 @@ mixin _$HomeStore on HomeStoreBase, Store {
         name: 'HomeStoreBase.chromakey');
     try {
       return super.chromakey();
+    } finally {
+      _$HomeStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void escala() {
+    final _$actionInfo = _$HomeStoreBaseActionController.startAction(
+        name: 'HomeStoreBase.escala');
+    try {
+      return super.escala();
+    } finally {
+      _$HomeStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void rotacao() {
+    final _$actionInfo = _$HomeStoreBaseActionController.startAction(
+        name: 'HomeStoreBase.rotacao');
+    try {
+      return super.rotacao();
+    } finally {
+      _$HomeStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void encriptar() {
+    final _$actionInfo = _$HomeStoreBaseActionController.startAction(
+        name: 'HomeStoreBase.encriptar');
+    try {
+      return super.encriptar();
+    } finally {
+      _$HomeStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void decriptar() {
+    final _$actionInfo = _$HomeStoreBaseActionController.startAction(
+        name: 'HomeStoreBase.decriptar');
+    try {
+      return super.decriptar();
     } finally {
       _$HomeStoreBaseActionController.endAction(_$actionInfo);
     }
@@ -455,11 +551,23 @@ mixin _$HomeStore on HomeStoreBase, Store {
   }
 
   @override
+  void changeRadioFourrier(int? value) {
+    final _$actionInfo = _$HomeStoreBaseActionController.startAction(
+        name: 'HomeStoreBase.changeRadioFourrier');
+    try {
+      return super.changeRadioFourrier(value);
+    } finally {
+      _$HomeStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 sliderGamma: ${sliderGamma},
 sliderContrast: ${sliderContrast},
 radio: ${radio},
+radioFourrier: ${radioFourrier},
 isRGB: ${isRGB},
 mostra: ${mostra},
 equaliza: ${equaliza},
@@ -467,11 +575,13 @@ value1: ${value1},
 value2: ${value2},
 value3: ${value3},
 value4: ${value4},
+clip: ${clip},
 valuesMapped: ${valuesMapped},
 values: ${values},
 imagemLocal: ${imagemLocal},
 imagem: ${imagem},
-imagemOriginal: ${imagemOriginal}
+imagemOriginal: ${imagemOriginal},
+imagemEsconder: ${imagemEsconder}
     ''';
   }
 }
